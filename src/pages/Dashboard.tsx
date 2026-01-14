@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import { 
   Users, DollarSign, TrendingUp, Calendar, ShoppingCart, 
   Award, Wallet, BarChart3, Activity, AlertTriangle, TrendingDown, Zap
