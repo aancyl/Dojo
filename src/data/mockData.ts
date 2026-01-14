@@ -20,7 +20,6 @@ export const mockUsers: User[] = [
   { id: 'user-owner', email: 'owner@dojo.com', name: 'Sensei Marcus Chen', role: 'owner', phone: '555-0001', createdAt: '2020-01-01' },
   { id: 'user-trainer', email: 'trainer@dojo.com', name: 'Coach Sarah Kim', role: 'trainer', phone: '555-0002', createdAt: '2021-03-15' },
   { id: 'user-desk', email: 'desk@dojo.com', name: 'Alex Rivera', role: 'desk', phone: '555-0003', createdAt: '2022-06-01' },
-  { id: 'user-parent', email: 'parent@dojo.com', name: 'Jennifer Walsh', role: 'parent', phone: '555-0004', createdAt: '2023-01-10' },
 ];
 
 export const mockPlans: MembershipPlan[] = [

@@ -1,6 +1,6 @@
 // Core Types for Martial Arts Club Management
 
-export type UserRole = 'owner' | 'trainer' | 'desk' | 'parent';
+export type UserRole = 'owner' | 'trainer' | 'desk';
 
 export interface User {
   id: string;
@@ -30,7 +30,6 @@ export interface Member {
   freezeEnd?: string;
   medicalNotes?: string;
   emergencyContact?: string;
-  parentId?: string; // For kid members
   branchId: string;
 }
 

@@ -61,7 +61,6 @@ const AppRoutes = () => {
 
       <Route path="/balance-sheet" element={<ProtectedRoute><BalanceSheetPage /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-      <Route path="/parent-portal" element={<ProtectedRoute><PlaceholderPage title="Parent Portal" /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

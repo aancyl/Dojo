@@ -36,7 +36,6 @@ const LoginPage = () => {
     { email: 'owner@dojo.com', role: 'Owner', icon: Shield },
     { email: 'trainer@dojo.com', role: 'Trainer', icon: Swords },
     { email: 'desk@dojo.com', role: 'Front Desk', icon: Lock },
-    { email: 'parent@dojo.com', role: 'Parent', icon: Lock },
   ];
 
   return (

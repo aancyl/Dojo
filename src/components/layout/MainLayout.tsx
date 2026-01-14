@@ -35,7 +35,6 @@ const menuItems = [
 
   { path: '/balance-sheet', label: 'Balance Sheet', icon: BarChart3, roles: ['owner'] },
   { path: '/reports', label: 'Reports', icon: FileText, roles: ['owner', 'trainer'] },
-  { path: '/parent-portal', label: 'Parent Portal', icon: UserCircle, roles: ['parent'] },
 ];
 
 
