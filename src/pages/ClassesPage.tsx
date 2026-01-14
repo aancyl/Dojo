@@ -97,7 +97,7 @@ const ClassesPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Disciplines</SelectItem>
-              {MARTIAL_ART_DISCIPLINES.map(d => (
+              {MARTIAL_ART_DISCIPLINES.slice(0, MARTIAL_ART_DISCIPLINES.findIndex(d => d.id === 'mma') + 1).map(d => (
                 <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
               ))}
             </SelectContent>

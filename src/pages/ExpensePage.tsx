@@ -399,7 +399,7 @@ const ExpensePage = () => {
                     <TableCell className="font-medium min-w-[200px]">{entry.description}</TableCell>
                     <TableCell className="whitespace-nowrap">
                       <div className="flex flex-col gap-1">
-                        <Badge variant="outline" className="capitalize font-mono border-rose-500/20 text-rose-500 w-fit">{entry.category}</Badge>
+                        <Badge variant="outline" className="capitalize font-sans border-rose-500/20 text-rose-500 w-fit">{entry.category}</Badge>
                         <span className="text-[10px] text-muted-foreground uppercase px-1">{entry.source}</span>
                       </div>
                     </TableCell>
@@ -443,7 +443,7 @@ const ExpensePage = () => {
 
               <div className="flex items-center justify-between pt-2 border-t border-border/50">
                 <div className="flex flex-col gap-1">
-                  <Badge variant="outline" className="text-[10px] uppercase font-mono border-rose-500/20 text-rose-500 w-fit">
+                    <Badge variant="outline" className="text-[10px] uppercase font-sans border-rose-500/20 text-rose-500 w-fit">
                     {entry.category}
                   </Badge>
                   <span className="text-[9px] text-muted-foreground uppercase">{entry.source}</span>

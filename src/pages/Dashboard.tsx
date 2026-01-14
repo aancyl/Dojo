@@ -171,24 +171,22 @@ const Dashboard = () => {
       className="space-y-6"
     >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-display font-black gradient-text-vibrant tracking-tighter animate-float">Command Center</h1>
+            <h1 className="text-4xl font-display font-bold gradient-text-vibrant tracking-tighter">Dashboard</h1>
             <p className="text-muted-foreground mt-1 text-lg font-medium">Welcome back, Sensei. Here's your dojo's vibrant pulse.</p>
           </div>
-          <motion.div 
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
+          <div 
             onClick={() => {
               const activeCount = attendance.filter(a => a.date === new Date().toISOString().split('T')[0]).length;
               toast.info(`Dojo Status: ${activeCount} active participants currently checked in.`);
             }}
             className="px-6 py-3 rounded-2xl bg-gradient-to-r from-primary via-accent to-secondary text-white font-bold shadow-[0_0_20px_rgba(var(--primary),0.4)] flex items-center gap-2 cursor-pointer"
           >
-            <Activity className="w-5 h-5 animate-pulse" />
+            <Activity className="w-5 h-5" />
             LIVE STATUS
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
 
       {/* Stats Grid */}
@@ -506,9 +504,12 @@ const Dashboard = () => {
                     <p className="font-medium text-sm">{member.name}</p>
                     <p className="text-xs text-muted-foreground">Expires: {member.expiryDate}</p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full belt-${member.belt}`}>
-                    {member.belt}
-                  </span>
+                    <span className={cn(
+                      "text-[10px] px-2 py-0.5 font-bold uppercase tracking-wider",
+                      "belt-" + member.belt.toLowerCase().replace(/\//g, '-')
+                    )}>
+                      {member.belt}
+                    </span>
                 </motion.div>
               ))
             ) : (

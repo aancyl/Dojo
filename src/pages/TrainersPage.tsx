@@ -388,9 +388,9 @@ const TrainerFormModal = ({ isOpen, onClose, trainer, mode }: { isOpen: boolean;
 
             <div className="space-y-3">
               <Label className="text-xs font-bold uppercase text-slate-500">Teaching Disciplines</Label>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-xl bg-slate-50 border border-slate-100 max-h-[200px] overflow-y-auto">
-                {MARTIAL_ART_DISCIPLINES.map(d => (
-                  <div key={d.id} className="flex items-center space-x-2">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-xl bg-slate-50 border border-slate-100 max-h-[200px] overflow-y-auto">
+                  {MARTIAL_ART_DISCIPLINES.slice(0, MARTIAL_ART_DISCIPLINES.findIndex(d => d.id === 'mma') + 1).map(d => (
+                    <div key={d.id} className="flex items-center space-x-2">
                     <Checkbox 
                       id={`disc-${d.id}`} 
                       checked={formData.disciplineIds.includes(d.id)}

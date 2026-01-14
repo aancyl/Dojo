@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -92,8 +92,8 @@
     }
 
     h1, h2, h3, h4, h5, h6 {
-      font-family: 'Orbitron', monospace;
-      @apply tracking-wider uppercase;
+      font-family: 'Inter', system-ui, sans-serif;
+      @apply tracking-normal;
     }
   }
 
@@ -173,33 +173,63 @@
       background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--secondary)) 100%);
     }
 
-      /* Belt Styles - Authentic Colors */
-      .belt-white { @apply bg-white text-slate-800 border-slate-300; }
-      .belt-yellow { @apply bg-yellow-400 text-yellow-950 border-yellow-500 shadow-[inset_0_-2px_0_rgba(0,0,0,0.1)]; }
-      .belt-orange { @apply bg-orange-500 text-white border-orange-600 shadow-[inset_0_-2px_0_rgba(0,0,0,0.2)]; }
-      .belt-green { @apply bg-green-600 text-white border-green-700 shadow-[inset_0_-2px_0_rgba(0,0,0,0.2)]; }
-      .belt-blue { @apply bg-blue-600 text-white border-blue-700 shadow-[inset_0_-2px_0_rgba(0,0,0,0.2)]; }
-      .belt-purple { @apply bg-purple-600 text-white border-purple-700 shadow-[inset_0_-2px_0_rgba(0,0,0,0.2)]; }
-      .belt-brown { @apply bg-amber-800 text-white border-amber-900 shadow-[inset_0_-2px_0_rgba(0,0,0,0.3)]; }
-      .belt-red { @apply bg-red-600 text-white border-red-700 shadow-[inset_0_-2px_0_rgba(0,0,0,0.2)]; }
-      .belt-black { @apply bg-slate-900 text-white border-black shadow-[inset_0_-2px_0_rgba(255,255,255,0.1)]; }
-      .belt-gold { @apply bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300 text-amber-950 border-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.4),inset_0_-2px_0_rgba(0,0,0,0.2)]; }
-      
-      [class^="belt-"] {
-        @apply border-2 px-3 py-1 rounded font-black text-[11px] uppercase tracking-wider relative overflow-hidden flex items-center justify-center min-w-[85px];
-        text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        /* Belt Styles - Authentic Colors */
+        .belt-badge-base {
+          @apply border-2 px-3 py-1 rounded font-black text-[11px] uppercase tracking-wider relative overflow-hidden flex items-center justify-center min-w-[85px];
+          text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+          /* Default fallback style if no specific color is matched */
+          background-color: theme('colors.slate.100');
+          color: theme('colors.slate.600');
+          border-color: theme('colors.slate.300');
+        }
+
+        /* Add a "belt stripe" effect */
+        .belt-badge-base::before {
+          content: '';
+          @apply absolute inset-y-0 right-3 w-3 bg-black/10;
+        }
+
+        .belt-white { @apply belt-badge-base bg-white text-slate-800 border-slate-300; }
+        .belt-white::before { @apply bg-slate-100; }
+        
+        .belt-yellow { @apply belt-badge-base bg-yellow-400 text-yellow-950 border-yellow-400 shadow-[inset_0_-2px_0_rgba(0,0,0,0.05)]; }
+        
+        .belt-orange { @apply belt-badge-base bg-orange-500 text-white border-orange-500 shadow-[inset_0_-2px_0_rgba(0,0,0,0.1)]; }
+        
+        .belt-green { @apply belt-badge-base bg-green-600 text-white border-green-600 shadow-[inset_0_-2px_0_rgba(0,0,0,0.1)]; }
+        
+        .belt-blue { @apply belt-badge-base bg-blue-600 text-white border-blue-600 shadow-[inset_0_-2px_0_rgba(0,0,0,0.1)]; }
+        
+        .belt-purple { @apply belt-badge-base bg-purple-600 text-white border-purple-600 shadow-[inset_0_-2px_0_rgba(0,0,0,0.1)]; }
+        
+        .belt-brown { @apply belt-badge-base bg-amber-800 text-white border-amber-800 shadow-[inset_0_-2px_0_rgba(0,0,0,0.2)]; }
+        
+        .belt-red { @apply belt-badge-base bg-red-600 text-white border-red-600 shadow-[inset_0_-2px_0_rgba(0,0,0,0.1)]; }
+        
+        .belt-black { @apply belt-badge-base bg-slate-900 text-white border-black shadow-[inset_0_-2px_0_rgba(255,255,255,0.1)]; }
+        .belt-black::before { @apply bg-white/10; }
+        
+        .belt-gold { @apply belt-badge-base bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300 text-amber-950 border-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.4),inset_0_-2px_0_rgba(0,0,0,0.2)]; }
+        .belt-gold::before { @apply bg-amber-600/20; }
+        
+        /* New Ranks Styles */
+        .belt-red-black { @apply belt-badge-base bg-gradient-to-r from-red-600 to-slate-900 text-white border-red-800; }
+        .belt-red-white { @apply belt-badge-base bg-gradient-to-r from-red-600 to-white text-slate-800 border-red-800; }
+        .belt-silver { @apply belt-badge-base bg-slate-300 text-slate-800 border-slate-400; }
+
+        /* Belt Theme Containers */
+        .belt-theme-white { --belt-color: theme('colors.slate.200'); --belt-bg: theme('colors.slate.50'); }
+        .belt-theme-yellow { --belt-color: theme('colors.yellow-400'); --belt-bg: theme('colors.yellow-50'); }
+        .belt-theme-orange { --belt-color: theme('colors.orange-500'); --belt-bg: theme('colors.orange-50'); }
+        .belt-theme-green { --belt-color: theme('colors.green-600'); --belt-bg: theme('colors.green-50'); }
+        .belt-theme-blue { --belt-color: theme('colors.blue-600'); --belt-bg: theme('colors.blue-50'); }
+        .belt-theme-purple { --belt-color: theme('colors.purple-600'); --belt-bg: theme('colors.purple-50'); }
+        .belt-theme-brown { --belt-color: theme('colors.amber-800'); --belt-bg: theme('colors.amber-50'); }
+        .belt-theme-red { --belt-color: theme('colors.red-600'); --belt-bg: theme('colors.red-50'); }
+        .belt-theme-black { --belt-color: theme('colors.slate-900'); --belt-bg: theme('colors.slate-100'); }
+        .belt-theme-gold { --belt-color: theme('colors.amber-500'); --belt-bg: theme('colors.amber-50'); }
       }
 
-      /* Add a "belt stripe" effect */
-      [class^="belt-"]::before {
-        content: '';
-        @apply absolute inset-y-0 right-3 w-3 bg-black/10;
-      }
-
-      .belt-black::before { @apply bg-white/10; }
-      .belt-white::before { @apply bg-slate-100; }
-      .belt-gold::before { @apply bg-amber-600/20; }
-    }
   
     @layer utilities {
       .animate-float {

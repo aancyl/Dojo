@@ -504,11 +504,11 @@ const SchedulePage = () => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select discipline" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {MARTIAL_ART_DISCIPLINES.map(d => (
-                        <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                      ))}
-                    </SelectContent>
+                      <SelectContent>
+                        {MARTIAL_ART_DISCIPLINES.slice(0, MARTIAL_ART_DISCIPLINES.findIndex(d => d.id === 'mma') + 1).map(d => (
+                          <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                        ))}
+                      </SelectContent>
                   </Select>
                 </div>
               </div>

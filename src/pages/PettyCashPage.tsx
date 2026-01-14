@@ -505,7 +505,7 @@ const PettyCashPage = () => {
 
                   <div className="flex items-center justify-between pt-2 border-t border-white/5">
                     <div className="flex flex-col gap-1">
-                      <Badge variant="outline" className={cn("text-[10px] uppercase font-mono flex items-center gap-1 w-fit", getCategoryColor(entry.category))}>
+                      <Badge variant="outline" className={cn("text-[10px] uppercase font-sans flex items-center gap-1 w-fit", getCategoryColor(entry.category))}>
                         {getCategoryIcon(entry.category)}
                         {entry.category}
                       </Badge>

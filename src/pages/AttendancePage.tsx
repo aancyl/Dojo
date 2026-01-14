@@ -104,20 +104,8 @@ const AttendancePage = () => {
     );
   }, [trainers, searchQuery]);
 
-    const getBeltColor = (belt: BeltRank) => {
-      const colors: Record<BeltRank, string> = {
-        white: 'belt-white',
-        yellow: 'belt-yellow',
-        orange: 'belt-orange',
-        green: 'belt-green',
-        blue: 'belt-blue',
-        purple: 'belt-purple',
-        brown: 'belt-brown',
-        red: 'belt-red',
-        black: 'belt-black',
-        gold: 'belt-gold',
-      };
-      return colors[belt];
+    const getBeltColor = (belt: string) => {
+      return "belt-" + belt.toLowerCase().replace(/\//g, '-');
     };
 
   const handleCheckIn = (id: string, type: 'member' | 'trainer') => {

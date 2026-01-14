@@ -39,8 +39,8 @@ export const mockTrainers: Trainer[] = [
 
 export const mockMembers: Member[] = [
   { id: 'mem-1', name: 'James Wilson', email: 'james@email.com', phone: '555-2001', belt: 'blue', disciplineId: 'bjj', planId: 'plan-3', joinDate: '2022-03-01', expiryDate: formatDate(addDays(today, 15)), status: 'active', branchId: 'branch-1' },
-  { id: 'mem-2', name: 'Emma Thompson', email: 'emma@email.com', phone: '555-2002', belt: 'green', disciplineId: 'kickboxing', planId: 'plan-2', joinDate: '2022-06-15', expiryDate: formatDate(addDays(today, 8)), status: 'active', branchId: 'branch-1' },
-  { id: 'mem-3', name: 'Michael Chen', email: 'michael@email.com', phone: '555-2003', belt: 'gold', disciplineId: 'karate', planId: 'plan-3', joinDate: '2021-09-01', expiryDate: formatDate(addDays(today, 22)), status: 'active', branchId: 'branch-1' },
+  { id: 'mem-2', name: 'Emma Thompson', email: 'emma@email.com', phone: '555-2002', belt: 'Intermediate', disciplineId: 'kickboxing', planId: 'plan-2', joinDate: '2022-06-15', expiryDate: formatDate(addDays(today, 8)), status: 'active', branchId: 'branch-1' },
+  { id: 'mem-3', name: 'Michael Chen', email: 'michael@email.com', phone: '555-2003', belt: 'black', disciplineId: 'karate', planId: 'plan-3', joinDate: '2021-09-01', expiryDate: formatDate(addDays(today, 22)), status: 'active', branchId: 'branch-1' },
   { id: 'mem-4', name: 'Sofia Garcia', email: 'sofia@email.com', phone: '555-2004', belt: 'yellow', disciplineId: 'taekwondo', planId: 'plan-1', joinDate: '2023-01-10', expiryDate: formatDate(addDays(today, -5)), status: 'expired', branchId: 'branch-1' },
   { id: 'mem-5', name: 'Daniel Kim', email: 'daniel@email.com', phone: '555-2005', belt: 'brown', disciplineId: 'bjj', planId: 'plan-4', joinDate: '2020-05-20', expiryDate: formatDate(addDays(today, 120)), status: 'active', branchId: 'branch-1' },
   { id: 'mem-6', name: 'Olivia Martinez', email: 'olivia@email.com', phone: '555-2006', belt: 'white', disciplineId: 'karate', planId: 'plan-1', joinDate: '2023-11-01', expiryDate: formatDate(addDays(today, 5)), status: 'active', branchId: 'branch-2' },
@@ -50,13 +50,13 @@ export const mockMembers: Member[] = [
 export const mockClasses: ClassSession[] = [
   { id: 'class-1', name: 'Beginner Karate', disciplineId: 'karate', trainerId: 'trainer-1', dayOfWeek: 1, startTime: '09:00', endTime: '10:00', maxCapacity: 20, beltMin: 'white', beltMax: 'yellow', branchId: 'branch-1' },
   { id: 'class-2', name: 'Advanced Sparring', disciplineId: 'karate', trainerId: 'trainer-1', dayOfWeek: 1, startTime: '18:00', endTime: '19:30', maxCapacity: 15, beltMin: 'green', beltMax: 'black', branchId: 'branch-1' },
-  { id: 'class-3', name: 'Kids Kickboxing', disciplineId: 'kickboxing', trainerId: 'trainer-2', dayOfWeek: 2, startTime: '16:00', endTime: '17:00', maxCapacity: 25, beltMin: 'white', beltMax: 'orange', branchId: 'branch-1' },
+  { id: 'class-3', name: 'Kids Kickboxing', disciplineId: 'kickboxing', trainerId: 'trainer-2', dayOfWeek: 2, startTime: '16:00', endTime: '17:00', maxCapacity: 25, beltMin: 'Beginner', beltMax: 'Advanced', branchId: 'branch-1' },
   { id: 'class-4', name: 'BJJ Fundamentals', disciplineId: 'bjj', trainerId: 'trainer-3', dayOfWeek: 2, startTime: '19:00', endTime: '20:30', maxCapacity: 18, beltMin: 'white', beltMax: 'blue', branchId: 'branch-2' },
-  { id: 'class-5', name: 'Morning Cardio Kick', disciplineId: 'kickboxing', trainerId: 'trainer-2', dayOfWeek: 3, startTime: '06:30', endTime: '07:30', maxCapacity: 30, beltMin: 'white', beltMax: 'black', branchId: 'branch-1' },
-  { id: 'class-6', name: 'Self-Defense', disciplineId: 'mma', trainerId: 'trainer-4', dayOfWeek: 3, startTime: '18:00', endTime: '19:00', maxCapacity: 20, beltMin: 'white', beltMax: 'black', branchId: 'branch-2' },
+  { id: 'class-5', name: 'Morning Cardio Kick', disciplineId: 'kickboxing', trainerId: 'trainer-2', dayOfWeek: 3, startTime: '06:30', endTime: '07:30', maxCapacity: 30, beltMin: 'Beginner', beltMax: 'Professional', branchId: 'branch-1' },
+  { id: 'class-6', name: 'Self-Defense', disciplineId: 'mma', trainerId: 'trainer-4', dayOfWeek: 3, startTime: '18:00', endTime: '19:00', maxCapacity: 20, beltMin: 'Amateur', beltMax: 'Champion', branchId: 'branch-2' },
   { id: 'class-7', name: 'Competition Prep', disciplineId: 'karate', trainerId: 'trainer-1', dayOfWeek: 4, startTime: '17:00', endTime: '19:00', maxCapacity: 12, beltMin: 'blue', beltMax: 'black', branchId: 'branch-1' },
   { id: 'class-8', name: 'Aikido Flow', disciplineId: 'aikido', trainerId: 'trainer-4', dayOfWeek: 5, startTime: '10:00', endTime: '11:30', maxCapacity: 16, beltMin: 'white', beltMax: 'black', branchId: 'branch-2' },
-  { id: 'class-9', name: 'Weekend Warriors', disciplineId: 'mma', trainerId: 'trainer-3', dayOfWeek: 6, startTime: '09:00', endTime: '11:00', maxCapacity: 25, beltMin: 'white', beltMax: 'black', branchId: 'branch-1' },
+  { id: 'class-9', name: 'Weekend Warriors', disciplineId: 'mma', trainerId: 'trainer-3', dayOfWeek: 6, startTime: '09:00', endTime: '11:00', maxCapacity: 25, beltMin: 'Amateur', beltMax: 'Champion', branchId: 'branch-1' },
   { id: 'class-10', name: 'Open Mat', disciplineId: 'bjj', trainerId: 'trainer-1', dayOfWeek: 0, startTime: '14:00', endTime: '16:00', maxCapacity: 30, beltMin: 'white', beltMax: 'black', branchId: 'branch-1' },
 ];
 

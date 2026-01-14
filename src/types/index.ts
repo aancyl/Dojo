@@ -12,7 +12,7 @@ export interface User {
   createdAt: string;
 }
 
-export type BeltRank = 'white' | 'yellow' | 'orange' | 'green' | 'blue' | 'purple' | 'brown' | 'red' | 'black' | 'gold' | 'none';
+export type BeltRank = string;
 
 export interface Member {
   id: string;

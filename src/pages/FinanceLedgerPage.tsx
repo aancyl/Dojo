@@ -443,7 +443,7 @@ const FinanceLedgerPage = () => {
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                  <Badge variant="outline" className="text-[10px] uppercase font-mono">
+                  <Badge variant="outline" className="text-[10px] uppercase font-sans">
                     {entry.category}
                   </Badge>
                   <p className={cn(

@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
-import { Member, BeltRank } from '@/types';
+import { MARTIAL_ART_DISCIPLINES, getDisciplineRanks, getRankSystem } from '@/data/martialArts';
 import { 
   Search, Plus, Award, MoreVertical, Edit, Trash2, Calendar,
   User, CheckCircle2, AlertCircle, TrendingUp, Filter
@@ -16,16 +16,33 @@ import { toast } from 'sonner';
 
 import { StatCard } from '@/components/StatCard';
 
-const belts: BeltRank[] = ['white', 'yellow', 'orange', 'green', 'blue', 'purple', 'brown', 'red', 'black', 'gold'];
-
 const GradingPage = () => {
   const { members, gradings, promoteMember, trainers } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [isGradingModalOpen, setIsGradingModalOpen] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
   const [selectedTrainerId, setSelectedTrainerId] = useState<string>('');
-  const [newBelt, setNewBelt] = useState<BeltRank>('yellow');
+  const [newRank, setNewRank] = useState<string>('');
   const [notes, setNotes] = useState('');
+
+  const selectedMember = useMemo(() => 
+    members.find(m => m.id === selectedMemberId),
+  [members, selectedMemberId]);
+
+  const currentRanks = useMemo(() => 
+    getDisciplineRanks(selectedMember?.disciplineId),
+  [selectedMember]);
+
+  const currentRankSystem = useMemo(() => 
+    getRankSystem(selectedMember?.disciplineId),
+  [selectedMember]);
+
+  // Reset new rank when member changes
+  useEffect(() => {
+    if (currentRanks.length > 0) {
+      setNewRank(currentRanks[0]);
+    }
+  }, [currentRanks]);
 
   const filteredGradings = useMemo(() => {
     return gradings
@@ -59,19 +76,20 @@ const GradingPage = () => {
 
     const handleAddGrading = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedMemberId || !selectedTrainerId) {
-      toast.error('Please select a member and a trainer');
+    if (!selectedMemberId || !selectedTrainerId || !newRank) {
+      toast.error('Please select a member, trainer, and new rank');
       return;
     }
     const member = members.find(m => m.id === selectedMemberId);
     if (!member) return;
 
-    promoteMember(selectedMemberId, newBelt, selectedTrainerId, notes);
+    promoteMember(selectedMemberId, newRank, selectedTrainerId, notes);
 
     toast.success(`Grading recorded for ${member.name}`);
     setIsGradingModalOpen(false);
     setSelectedMemberId('');
     setSelectedTrainerId('');
+    setNewRank('');
     setNotes('');
   };
 
@@ -85,8 +103,8 @@ const GradingPage = () => {
       {/* Header */}
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold gradient-text-vibrant">Belt Grading</h1>
-          <p className="text-muted-foreground mt-1">Track and manage student belt progressions</p>
+          <h1 className="text-3xl font-display font-bold gradient-text-vibrant">Grading & Promotions</h1>
+          <p className="text-muted-foreground mt-1">Track student rank progressions across all disciplines</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -149,13 +167,23 @@ const GradingPage = () => {
                   <th className="px-6 py-4 text-sm font-bold uppercase tracking-wider text-muted-foreground whitespace-nowrap">Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
-                {filteredGradings.map((grading) => {
-                  const member = members.find(m => m.id === grading.memberId);
-                  const trainer = trainers.find(t => t.id === grading.trainerId);
-                  return (
-                    <tr key={grading.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                  <tbody className="divide-y divide-border">
+                  {filteredGradings.map((grading) => {
+                    const member = members.find(m => m.id === grading.memberId);
+                    const trainer = trainers.find(t => t.id === grading.trainerId);
+                    const beltThemeClass = `belt-theme-${grading.toBelt.toLowerCase().replace(/\s+/g, '-')}`;
+                    
+                    return (
+                      <tr 
+                        key={grading.id} 
+                        className={cn(
+                          "transition-colors",
+                          "hover:bg-[var(--belt-bg,theme('colors.muted.300'))]",
+                          beltThemeClass
+                        )}
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary flex-shrink-0">
                             {member?.name.charAt(0)}
@@ -167,15 +195,15 @@ const GradingPage = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          <span className={cn("belt-" + grading.fromBelt)}>
-                            {grading.fromBelt}
-                          </span>
-                          <TrendingUp className="w-3 h-3 text-muted-foreground" />
-                          <span className={cn("belt-" + grading.toBelt)}>
-                            {grading.toBelt}
-                          </span>
-                        </div>
+                          <div className="flex items-center gap-3">
+                            <span className={cn("belt-" + grading.fromBelt.toLowerCase().replace(/\//g, '-'))}>
+                              {grading.fromBelt}
+                            </span>
+                            <TrendingUp className="w-3 h-3 text-muted-foreground" />
+                            <span className={cn("belt-" + grading.toBelt.toLowerCase().replace(/\//g, '-'))}>
+                              {grading.toBelt}
+                            </span>
+                          </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {trainer?.name || 'Unknown'}
@@ -201,55 +229,58 @@ const GradingPage = () => {
 
         {/* Mobile Card View */}
         <div className="md:hidden space-y-4">
-          {filteredGradings.map((grading) => {
-            const member = members.find(m => m.id === grading.memberId);
-            const trainer = trainers.find(t => t.id === grading.trainerId);
-            return (
-                <div key={grading.id} className="glass-card p-5 space-y-5 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 blur-2xl group-hover:bg-primary/10 transition-colors" />
-                  
-                  <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary flex-shrink-0 border-2 border-primary/20">
-                        {member?.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-lg leading-tight">{member?.name}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mt-0.5">
-                          {new Date(grading.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                        </p>
-                      </div>
-                    </div>
-                    <div className={cn("scale-90 shadow-sm", "belt-" + grading.toBelt)}>
-                      {grading.toBelt}
-                    </div>
-                  </div>
-
-                  <div className="relative py-6 px-4 bg-muted/30 rounded-xl border border-border/50 overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-primary/20" />
+            {filteredGradings.map((grading) => {
+              const member = members.find(m => m.id === grading.memberId);
+              const trainer = trainers.find(t => t.id === grading.trainerId);
+              const beltThemeClass = `belt-theme-${grading.toBelt.toLowerCase().replace(/\s+/g, '-')}`;
+              
+              return (
+                  <div key={grading.id} className={cn("glass-card p-5 space-y-5 relative overflow-hidden group", beltThemeClass)}>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 blur-2xl group-hover:bg-primary/10 transition-colors" />
+                    
                     <div className="flex items-center justify-between relative z-10">
-                      <div className="flex flex-col items-start gap-1.5">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground/70 tracking-widest">Current Rank</span>
-                        <div className={cn("belt-" + grading.fromBelt)}>
-                          {grading.fromBelt}
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary flex-shrink-0 border-2 border-primary/20">
+                          {member?.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-lg leading-tight">{member?.name}</p>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mt-0.5">
+                            {new Date(grading.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                          </p>
                         </div>
                       </div>
-                      
-                      <div className="flex flex-col items-center">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shadow-sm">
-                          <TrendingUp className="w-4 h-4 text-primary" />
-                        </div>
-                        <div className="h-px w-8 bg-gradient-to-r from-transparent via-primary/30 to-transparent mt-2" />
-                      </div>
-
-                      <div className="flex flex-col items-end gap-1.5">
-                        <span className="text-[10px] uppercase font-bold text-primary/70 tracking-widest text-right">New Rank</span>
-                        <div className={cn("belt-" + grading.toBelt)}>
+                        <div className={cn("scale-90 shadow-sm", "belt-" + grading.toBelt.toLowerCase().replace(/\//g, '-'))}>
                           {grading.toBelt}
                         </div>
                       </div>
-                    </div>
-                  </div>
+    
+                      <div className="relative py-6 px-4 bg-[var(--belt-bg,theme('colors.muted.300'))] rounded-xl border border-border/50 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-[var(--belt-color,theme('colors.primary.DEFAULT'))] opacity-30" />
+                        <div className="flex items-center justify-between relative z-10">
+                          <div className="flex flex-col items-start gap-1.5">
+                            <span className="text-[10px] uppercase font-bold text-muted-foreground/70 tracking-widest">Current Rank</span>
+                            <div className={cn("belt-" + grading.fromBelt.toLowerCase().replace(/\//g, '-'))}>
+                              {grading.fromBelt}
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-col items-center">
+                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shadow-sm">
+                              <TrendingUp className="w-4 h-4 text-primary" />
+                            </div>
+                            <div className="h-px w-8 bg-gradient-to-r from-transparent via-primary/30 to-transparent mt-2" />
+                          </div>
+    
+                          <div className="flex flex-col items-end gap-1.5">
+                            <span className="text-[10px] uppercase font-bold text-primary/70 tracking-widest text-right">New Rank</span>
+                            <div className={cn("belt-" + grading.toBelt.toLowerCase().replace(/\//g, '-'))}>
+                              {grading.toBelt}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
 
                   <div className="space-y-4 pt-1">
                     <div className="flex items-center justify-between text-sm">
@@ -289,54 +320,54 @@ const GradingPage = () => {
               Promote a student to a new belt rank and record feedback.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleAddGrading} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Student</Label>
-              <Select value={selectedMemberId} onValueChange={setSelectedMemberId}>
-                <SelectTrigger className="bg-slate-50 border-slate-200">
-                  <SelectValue placeholder="Select student" />
-                </SelectTrigger>
-                <SelectContent>
-                  {members.filter(m => m.status === 'active').map(member => (
-                    <SelectItem key={member.id} value={member.id}>
-                      {member.name} ({member.belt} belt)
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleAddGrading} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Trainer / Examiner</Label>
-                <Select value={selectedTrainerId} onValueChange={setSelectedTrainerId}>
+                <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Student</Label>
+                <Select value={selectedMemberId} onValueChange={setSelectedMemberId}>
                   <SelectTrigger className="bg-slate-50 border-slate-200">
-                    <SelectValue placeholder="Select trainer" />
+                    <SelectValue placeholder="Select student" />
                   </SelectTrigger>
                   <SelectContent>
-                    {trainers.map(trainer => (
-                      <SelectItem key={trainer.id} value={trainer.id}>
-                        {trainer.name}
+                    {members.filter(m => m.status === 'active').map(member => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.name} ({member.belt} {getRankSystem(member.disciplineId)})
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">New Belt Rank</Label>
-                <Select value={newBelt} onValueChange={(v) => setNewBelt(v as BeltRank)}>
-                  <SelectTrigger className="bg-slate-50 border-slate-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {belts.map(belt => (
-                      <SelectItem key={belt} value={belt} className="capitalize">{belt}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Trainer / Examiner</Label>
+                  <Select value={selectedTrainerId} onValueChange={setSelectedTrainerId}>
+                    <SelectTrigger className="bg-slate-50 border-slate-200">
+                      <SelectValue placeholder="Select trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {trainers.map(trainer => (
+                        <SelectItem key={trainer.id} value={trainer.id}>
+                          {trainer.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-slate-500 capitalize">New {currentRankSystem}</Label>
+                  <Select value={newRank} onValueChange={setNewRank}>
+                    <SelectTrigger className="bg-slate-50 border-slate-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currentRanks.map(rank => (
+                        <SelectItem key={rank} value={rank} className="capitalize">{rank}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
 
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Notes & Feedback</Label>

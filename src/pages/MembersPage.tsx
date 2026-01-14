@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { Member, BeltRank } from '@/types';
-import { MARTIAL_ART_DISCIPLINES } from '@/data/martialArts';
+import { MARTIAL_ART_DISCIPLINES, getDisciplineRanks, getRankSystem } from '@/data/martialArts';
 import { 
   Search, Plus, Filter, UserCircle, Phone, Mail, Calendar, 
   Award, MoreVertical, Edit, Trash2, Eye, X, AlertCircle,
@@ -20,12 +20,10 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { StatCard } from '@/components/StatCard';
 
-const belts: BeltRank[] = ['white', 'yellow', 'orange', 'green', 'blue', 'purple', 'brown', 'red', 'black', 'gold', 'none'];
-
 const MembersPage = () => {
   const { members, plans, deleteMember, addMember, updateMember, freezeMembership, unfreezeMembership, gradings, attendance } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
-    const [filterBelt, setFilterBelt] = useState<BeltRank | 'all'>('all');
+    const [filterRank, setFilterRank] = useState<string | 'all'>('all');
     const [filterDiscipline, setFilterDiscipline] = useState<string | 'all'>('all');
     const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'frozen' | 'expired'>('all');
     const [sortBy, setSortBy] = useState<'name' | 'joinDate' | 'expiryDate'>('name');
@@ -43,10 +41,10 @@ const MembersPage = () => {
         .filter(member => {
           const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                 member.email.toLowerCase().includes(searchQuery.toLowerCase());
-          const matchesBelt = filterBelt === 'all' || member.belt === filterBelt;
+          const matchesRank = filterRank === 'all' || member.belt === filterRank;
           const matchesDiscipline = filterDiscipline === 'all' || member.disciplineId === filterDiscipline;
           const matchesStatus = filterStatus === 'all' || member.status === filterStatus;
-          return matchesSearch && matchesBelt && matchesDiscipline && matchesStatus;
+          return matchesSearch && matchesRank && matchesDiscipline && matchesStatus;
         })
 
       .sort((a, b) => {
@@ -54,7 +52,7 @@ const MembersPage = () => {
         if (sortBy === 'name') return a.name.localeCompare(b.name) * factor;
         return (new Date(a[sortBy]).getTime() - new Date(b[sortBy]).getTime()) * factor;
       });
-  }, [members, searchQuery, filterBelt, filterStatus, sortBy, sortOrder]);
+  }, [members, searchQuery, filterRank, filterStatus, sortBy, sortOrder]);
 
   const stats = useMemo(() => {
     return {
@@ -118,6 +116,12 @@ const MembersPage = () => {
       setIsViewModalOpen(false);
     }
   };
+
+  const allPossibleRanks = useMemo(() => {
+    const ranks = new Set<string>();
+    MARTIAL_ART_DISCIPLINES.forEach(d => d.ranks.forEach(r => ranks.add(r)));
+    return Array.from(ranks).sort();
+  }, []);
 
   return (
     <motion.div
@@ -184,15 +188,15 @@ const MembersPage = () => {
             />
           </div>
           <div className="flex flex-wrap gap-3">
-              <Select value={filterBelt} onValueChange={(v) => setFilterBelt(v as BeltRank | 'all')}>
+              <Select value={filterRank} onValueChange={(v) => setFilterRank(v)}>
                 <SelectTrigger className="w-36 bg-background/50">
                   <Filter className="w-4 h-4 mr-2 text-muted-foreground" />
-                  <SelectValue placeholder="Belt" />
+                  <SelectValue placeholder="Rank" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Belts</SelectItem>
-                  {belts.map(belt => (
-                    <SelectItem key={belt} value={belt} className="capitalize">{belt}</SelectItem>
+                  <SelectItem value="all">All Ranks</SelectItem>
+                  {allPossibleRanks.map(rank => (
+                    <SelectItem key={rank} value={rank} className="capitalize">{rank}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -243,6 +247,7 @@ const MembersPage = () => {
           {filteredMembers.map((member) => {
             const plan = plans.find(p => p.id === member.planId);
             const daysUntilExpiry = Math.ceil((new Date(member.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+            const rankSystem = getRankSystem(member.disciplineId);
             
             return (
               <motion.div
@@ -305,7 +310,7 @@ const MembersPage = () => {
 
                     <div className="flex flex-wrap items-center gap-2 mt-3">
                         <span className={cn(
-                          "belt-" + member.belt
+                          "belt-" + member.belt.replace(/\//g, '-').toLowerCase()
                         )}>
                           {member.belt}
                         </span>
@@ -337,6 +342,8 @@ const MembersPage = () => {
         </AnimatePresence>
       </motion.div>
 
+      {/* Members Page remains mostly same, but I'll skip to MemberFormModal update */}
+
       {filteredMembers.length === 0 && (
         <motion.div
           variants={itemVariants}
@@ -362,11 +369,11 @@ const MembersPage = () => {
                       <DialogTitle className="text-2xl font-display font-bold">{selectedMember.name}</DialogTitle>
                       <DialogDescription className="sr-only">Detailed profile and history for {selectedMember.name}</DialogDescription>
                       <div className="flex items-center gap-2">
-                        <span className={cn(
-                          "belt-" + selectedMember.belt
-                        )}>
-                          {selectedMember.belt} Belt
-                        </span>
+                          <span className={cn(
+                            "belt-" + selectedMember.belt.toLowerCase().replace(/\//g, '-')
+                          )}>
+                            {selectedMember.belt} Belt
+                          </span>
                         <span className={cn(
                           "text-xs px-2.5 py-1 rounded-full capitalize font-medium",
                           getStatusColor(selectedMember.status)
@@ -548,12 +555,22 @@ const MemberFormModal = ({ isOpen, onClose, member, mode }: { isOpen: boolean; o
     name: member?.name || '',
     email: member?.email || '',
     phone: member?.phone || '',
-    belt: member?.belt || 'white' as BeltRank,
+    belt: member?.belt || '',
     disciplineId: member?.disciplineId || '',
     planId: member?.planId || '',
     medicalNotes: member?.medicalNotes || '',
     expiryDate: member?.expiryDate || '',
   });
+
+  // Reset belt if discipline changes and current belt isn't valid for new discipline
+  useEffect(() => {
+    if (formData.disciplineId) {
+      const validRanks = getDisciplineRanks(formData.disciplineId);
+      if (!validRanks.includes(formData.belt)) {
+        setFormData(prev => ({ ...prev, belt: validRanks[0] }));
+      }
+    }
+  }, [formData.disciplineId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -576,6 +593,9 @@ const MemberFormModal = ({ isOpen, onClose, member, mode }: { isOpen: boolean; o
     }
     onClose();
   };
+
+  const currentRanks = getDisciplineRanks(formData.disciplineId);
+  const currentRankSystem = getRankSystem(formData.disciplineId);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -633,14 +653,14 @@ const MemberFormModal = ({ isOpen, onClose, member, mode }: { isOpen: boolean; o
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Current Belt</Label>
-              <Select value={formData.belt} onValueChange={(v) => setFormData({ ...formData, belt: v as BeltRank })}>
+              <Label className="text-xs font-bold uppercase tracking-wider text-slate-500 capitalize">Current {currentRankSystem}</Label>
+              <Select value={formData.belt} onValueChange={(v) => setFormData({ ...formData, belt: v })}>
                 <SelectTrigger className="bg-slate-50 border-slate-200">
-                  <SelectValue />
+                  <SelectValue placeholder={`Select ${currentRankSystem}`} />
                 </SelectTrigger>
                 <SelectContent>
-                  {belts.map(belt => (
-                    <SelectItem key={belt} value={belt} className="capitalize font-medium">{belt}</SelectItem>
+                  {currentRanks.map(rank => (
+                    <SelectItem key={rank} value={rank} className="capitalize font-medium">{rank}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

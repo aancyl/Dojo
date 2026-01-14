@@ -404,7 +404,7 @@ const IncomePage = () => {
                     </TableCell>
                     <TableCell className="font-medium min-w-[200px]">{entry.description}</TableCell>
                     <TableCell className="whitespace-nowrap">
-                      <Badge variant="outline" className="capitalize font-mono border-primary/20 text-primary">{entry.category}</Badge>
+                      <Badge variant="outline" className="capitalize font-sans border-primary/20 text-primary">{entry.category}</Badge>
                     </TableCell>
                     <TableCell className="text-right font-bold text-emerald-500 whitespace-nowrap">
                       +AED {entry.amount.toFixed(2)}
@@ -444,14 +444,14 @@ const IncomePage = () => {
                 </Button>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                <Badge variant="outline" className="text-[10px] uppercase font-mono border-primary/20 text-primary">
-                  {entry.category}
-                </Badge>
-                <p className="font-bold text-lg text-emerald-500">
-                  +AED {entry.amount.toFixed(2)}
-                </p>
-              </div>
+                <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                  <Badge variant="outline" className="text-[10px] uppercase font-sans border-primary/20 text-primary">
+                    {entry.category}
+                  </Badge>
+                  <p className="font-bold text-lg text-emerald-500">
+                    +AED {entry.amount.toFixed(2)}
+                  </p>
+                </div>
             </motion.div>
           ))}
         </div>
