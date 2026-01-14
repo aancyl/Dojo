@@ -26,11 +26,17 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { StatCard } from '@/components/StatCard';
+import { DateRangeFilter } from '@/components/DateRangeFilter';
+import { format, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval, eachMonthOfInterval, isSameDay, isSameMonth } from 'date-fns';
 import { toast } from 'sonner';
 
 const ExpensePage = () => {
   const { pettyCash, ledger, addLedgerEntry, branches } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState({
+    start: startOfMonth(new Date()),
+    end: endOfMonth(new Date())
+  });
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -113,29 +119,54 @@ const ExpensePage = () => {
 
     return [...pettyCashExpenses, ...ledgerExpenses]
       .filter(entry => {
-        return entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const entryDate = new Date(entry.date);
+        const isInRange = isWithinInterval(entryDate, { 
+          start: dateRange.start, 
+          end: dateRange.end 
+        });
+        
+        const matchesSearch = entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                entry.category.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return isInRange && matchesSearch;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [pettyCash, ledger, searchTerm]);
+  }, [pettyCash, ledger, searchTerm, dateRange]);
 
   const totalExpense = useMemo(() => 
     expenseEntries.reduce((sum, e) => sum + e.amount, 0), 
   [expenseEntries]);
 
-  // Chart Data: Monthly Trend
-  const monthlyTrendData = useMemo(() => {
-    const months = ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'];
-    // Mocking historical data for trend
-    return [
-      { month: 'Aug', amount: 7500 },
-      { month: 'Sep', amount: 8200 },
-      { month: 'Oct', amount: 8000 },
-      { month: 'Nov', amount: 9100 },
-      { month: 'Dec', amount: 10500 },
-      { month: 'Jan', amount: totalExpense },
-    ];
-  }, [totalExpense]);
+  // Chart Data: Dynamic Trend
+  const trendData = useMemo(() => {
+    const daysCount = Math.ceil((dateRange.end.getTime() - dateRange.start.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysCount <= 31) {
+      // Show daily data
+      const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
+      return days.map(day => {
+        const amount = expenseEntries
+          .filter(e => isSameDay(new Date(e.date), day))
+          .reduce((sum, e) => sum + e.amount, 0);
+        return {
+          label: format(day, 'MMM d'),
+          amount
+        };
+      });
+    } else {
+      // Show monthly data
+      const months = eachMonthOfInterval({ start: dateRange.start, end: dateRange.end });
+      return months.map(month => {
+        const amount = expenseEntries
+          .filter(e => isSameMonth(new Date(e.date), month))
+          .reduce((sum, e) => sum + e.amount, 0);
+        return {
+          label: format(month, 'MMM yyyy'),
+          amount
+        };
+      });
+    }
+  }, [expenseEntries, dateRange]);
 
   // Chart Data: Distribution
   const distributionData = useMemo(() => {
@@ -168,16 +199,18 @@ const ExpensePage = () => {
       animate="visible"
       className="space-y-6"
     >
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-dojo-red uppercase tracking-wider">Expense Command</h1>
-          <p className="text-muted-foreground mt-1 text-lg">Operational costs and petty cash tracking</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="glass-button" onClick={handleExportCSV}>
-            <Download className="w-4 h-4 mr-2" /> Export
-          </Button>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-dojo-red uppercase tracking-wider">Expense Command</h1>
+            <p className="text-muted-foreground mt-1 text-lg">Operational costs and petty cash tracking</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <DateRangeFilter onRangeChange={setDateRange} />
+            <Button variant="outline" className="glass-button" onClick={handleExportCSV}>
+              <Download className="w-4 h-4 mr-2" /> Export
+            </Button>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+
             <DialogTrigger asChild>
               <Button className="btn-cyber bg-dojo-red hover:bg-dojo-red/90 border-red-500/50">
                 <Plus className="w-4 h-4 mr-2" /> Add Expense
@@ -280,20 +313,21 @@ const ExpensePage = () => {
             <TrendingDown className="w-5 h-5 text-dojo-red" />
             <h3 className="text-lg font-display font-semibold uppercase">Expense Trend</h3>
           </div>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
-                  itemStyle={{ color: '#ef4444' }}
-                />
-                <Bar dataKey="amount" fill="#ef4444" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={trendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                  <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+                    itemStyle={{ color: '#ef4444' }}
+                  />
+                  <Bar dataKey="amount" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
         </div>
 
         <div className="glass-card p-6">
