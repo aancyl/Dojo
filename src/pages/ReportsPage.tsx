@@ -88,7 +88,7 @@ const ReportsPage = () => {
   const handleShareReport = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Dojo Pulse Performance Report',
+        title: 'SAQR Dojo Performance Report',
         text: 'Check out our latest performance metrics!',
         url: window.location.href,
       }).catch(console.error);

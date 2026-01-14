@@ -1,8 +1,8 @@
-# Dojo Pulse - Martial Arts Management System
+# SAQR Dojo - Martial Arts Management System
 
 ## Project info
 
-Dojo Pulse is a comprehensive management system for martial arts schools, featuring attendance tracking, membership management, point of sale, and more.
+SAQR Dojo is a comprehensive management system for martial arts schools, featuring attendance tracking, membership management, point of sale, and more.
 
 ## How can I edit this code?
 

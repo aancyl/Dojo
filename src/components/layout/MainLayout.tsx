@@ -109,7 +109,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                   >
                     <Swords className="w-5 h-5 text-white animate-float" />
                   </motion.div>
-                  <span className="font-display font-black text-xl tracking-tighter gradient-text-vibrant">DOJO PULSE</span>
+                  <span className="font-display font-black text-xl tracking-tighter gradient-text-vibrant">SAQR DOJO</span>
                 </motion.div>
               ) : (
                 <motion.div
@@ -242,7 +242,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <Swords className="w-4 h-4 text-white" />
             </div>
-            <span className="font-display font-bold gradient-text-vibrant">DOJO PULSE</span>
+            <span className="font-display font-bold gradient-text-vibrant">SAQR DOJO</span>
           </div>
 
         <div className="flex items-center gap-2">
@@ -286,7 +286,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                       <Swords className="w-5 h-5 text-white" />
                     </div>
-                    <span className="font-display font-bold gradient-text-vibrant">DOJO PULSE</span>
+                    <span className="font-display font-bold gradient-text-vibrant">SAQR DOJO</span>
                   </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
