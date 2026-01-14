@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Swords, Shield, Lock } from 'lucide-react';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const { login } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +24,9 @@ const LoginPage = () => {
     await new Promise(resolve => setTimeout(resolve, 800));
 
     const success = login(email, password);
-    if (!success) {
+    if (success) {
+      navigate('/dashboard');
+    } else {
       setError('Please enter a valid email to enter the Dojo.');
     }
     setIsLoading(false);
@@ -173,8 +177,8 @@ const LoginPage = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
-                    setEmail(account.email);
-                    setPassword('demo');
+                    const success = login(account.email, 'demo');
+                    if (success) navigate('/dashboard');
                   }}
                   className="flex items-center gap-2 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border/30 transition-all text-sm"
                 >
