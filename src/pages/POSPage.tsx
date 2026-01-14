@@ -88,56 +88,70 @@ const POSPage = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="min-h-[calc(100vh-8rem)] flex flex-col lg:flex-row gap-6"
+      className="min-h-[calc(100vh-6rem)] flex flex-col lg:flex-row gap-4 sm:gap-6"
     >
       {/* Products Section */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 px-2 sm:px-0">
+        <motion.h1 
+          variants={itemVariants}
+          className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-4 sm:mb-6"
+        >
+          Point of Sales
+        </motion.h1>
+
         {/* Header */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <motion.div 
+          variants={itemVariants} 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+        >
         <StatCard 
           title="Today's Sales" 
           value={`AED ${stats.todaySales.toLocaleString()}`}
           icon={TrendingUp}
           variant="green"
+          className="p-4 sm:p-6 min-w-[140px] sm:min-w-0 flex-1 snap-start"
         />
         <StatCard 
-          title="Inventory Items" 
+          title="Inventory" 
           value={stats.totalItems.toString()}
           icon={Box}
           variant="blue"
+          className="p-4 sm:p-6 min-w-[140px] sm:min-w-0 flex-1 snap-start"
         />
         <StatCard 
           title="Low Stock" 
           value={stats.lowStock.toString()}
           icon={AlertTriangle}
           variant="red"
+          className="p-4 sm:p-6 min-w-[140px] sm:min-w-0 flex-1 snap-start"
         />
         <StatCard 
-          title="Total Members" 
+          title="Members" 
           value={stats.totalMembers.toString()}
           icon={User}
           variant="gold"
+          className="p-4 sm:p-6 min-w-[140px] sm:min-w-0 flex-1 snap-start"
         />
       </motion.div>
 
       {/* Search & Filters */}
-        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 mb-6">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
             <Input
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-card/50 border-border/50"
+              className="pl-9 bg-card/50 border-border/50 h-9 sm:h-10 text-sm"
             />
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
+                  "px-2.5 py-1 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-sm font-medium whitespace-nowrap transition-all",
                   selectedCategory === cat
                     ? "bg-primary text-white"
                     : "bg-muted/50 text-muted-foreground hover:bg-muted"
@@ -152,7 +166,7 @@ const POSPage = () => {
         {/* Products Grid */}
         <motion.div 
           variants={containerVariants}
-          className="flex-1 lg:overflow-y-auto scrollbar-cyber grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 content-start"
+          className="flex-1 lg:overflow-y-auto scrollbar-cyber grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 content-start"
         >
           <AnimatePresence mode="popLayout">
             {filteredInventory.map((item) => {
@@ -169,44 +183,48 @@ const POSPage = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={() => !isInCart && addToCart(item, 1)}
                   className={cn(
-                    "glass-card p-4 cursor-pointer transition-all relative overflow-hidden",
+                    "glass-card p-3 sm:p-4 cursor-pointer transition-all relative overflow-hidden",
                     isInCart && "ring-2 ring-primary"
                   )}
                 >
                   {/* Category Badge */}
                   <span className={cn(
-                    "absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full uppercase font-medium",
+                    "absolute top-2 sm:top-3 right-2 sm:right-3 text-[8px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full uppercase font-medium",
                     getCategoryColor(item.category)
                   )}>
                     {item.category}
                   </span>
 
                   {/* Product Icon/Image */}
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br from-primary/20 to-dojo-red/20 flex items-center justify-center">
-                    <Package className="w-8 h-8 text-primary" />
+                  <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/20 to-dojo-red/20 flex items-center justify-center">
+                    <Package className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
                   </div>
 
                   {/* Product Info */}
-                  <h3 className="font-semibold text-sm text-center mb-1 line-clamp-2">{item.name}</h3>
-                  <p className="text-xl font-display font-bold text-center text-neon-green">AED {item.price}</p>
-                  <p className="text-xs text-muted-foreground text-center mt-1">
-                    {item.stock} in stock
-                  </p>
+                  <h3 className="font-semibold text-[11px] sm:text-sm text-center mb-0.5 sm:mb-1 line-clamp-1 sm:line-clamp-2 leading-tight">{item.name}</h3>
+                  <div className="flex flex-col items-center">
+                    <p className="text-sm sm:text-xl font-display font-bold text-center text-neon-green leading-none">
+                      <span className="text-[10px] sm:text-sm mr-0.5">AED</span>{item.price}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground text-center mt-0.5">
+                      {item.stock} in stock
+                    </p>
+                  </div>
 
                   {/* In Cart Indicator */}
                   {isInCart && (
-                    <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                      <div className="flex items-center gap-2 bg-card/90 backdrop-blur px-3 py-2 rounded-lg">
+                    <div className="absolute inset-0 bg-primary/10 flex items-center justify-center backdrop-blur-[1px]">
+                      <div className="flex items-center gap-1.5 sm:gap-2 bg-card/95 backdrop-blur shadow-xl px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             updateCartQuantity(item.id, cartItem.quantity - 1);
                           }}
-                          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
+                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
                         >
-                          <Minus className="w-4 h-4" />
+                          <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
-                        <span className="font-bold text-lg w-8 text-center">{cartItem.quantity}</span>
+                        <span className="font-bold text-sm sm:text-lg w-5 sm:w-8 text-center">{cartItem.quantity}</span>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -214,9 +232,9 @@ const POSPage = () => {
                               updateCartQuantity(item.id, cartItem.quantity + 1);
                             }
                           }}
-                          className="w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/80"
+                          className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/80 transition-colors"
                         >
-                          <Plus className="w-4 h-4 text-white" />
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                         </button>
                       </div>
                     </div>

@@ -197,7 +197,8 @@ const FinanceLedgerPage = () => {
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button className="btn-cyber">
-                <Plus className="w-4 h-4 mr-2" /> Add Transaction
+                <Plus className="w-4 h-4 mr-2" /> 
+                <span className="hidden sm:inline">Add </span>Transaction
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-white border-slate-200">
